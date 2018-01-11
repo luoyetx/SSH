@@ -30,7 +30,7 @@ savedir = plot_out_path;
 if ~exist(savedir)
     mkdir(savedir);
 end
-savename = fullfile(savedir,sprintf('wider_pr_curve_%s_%s.pdf',seting_class,setting_name));
+savename = fullfile(savedir,sprintf('wider_pr_curve_%s_%s.png',seting_class,setting_name));
 saveTightFigure(gcf,savename);
 clear gcf;
 hold off;

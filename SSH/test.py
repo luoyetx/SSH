@@ -142,8 +142,8 @@ def test_net(net, imdb, thresh=0.05, visualize=False,no_cache=False,output_path=
     dets = [[[] for _ in xrange(len(imdb))] for _ in xrange(imdb.num_classes)]
     # NOTE: by default the detections for a given method is cached, set no_cache to disable caching!
     run_inference = True
+    output_dir = get_output_dir(imdb_name=imdb.name, net_name=net.name,output_dir=output_path)
     if not no_cache:
-        output_dir = get_output_dir(imdb_name=imdb.name, net_name=net.name,output_dir=output_path)
         det_file = os.path.join(output_dir, 'detections.pkl')
         if os.path.exists(det_file) and not visualize:
             try:

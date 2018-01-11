@@ -404,12 +404,12 @@ layer {
   bottom: "conv5_128"
   top: "conv5_128_up"
   convolution_param {
-    kernel_size: 4 
+    kernel_size: 4
     stride: 2
     num_output: 128
     group: 128
     pad: 1
-    weight_filler: { type: "bilinear" } 
+    weight_filler: { type: "bilinear" }
     bias_term: false
   }
   param { lr_mult: 0 decay_mult: 0 }
@@ -433,7 +433,7 @@ layer {
     pad: 0
     kernel_size: 1
     weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 } 
+    bias_filler { type: "constant" value: 0 }
   }
 }
 
@@ -494,8 +494,6 @@ layer {
   bottom: "conv4_fuse_final"
   top: "conv4_fuse_final"
 }
-#========== M3@OHEM OHEM =========
-
 layer {
   name: "pool6"
   type: "Pooling"
@@ -507,162 +505,7 @@ layer {
     stride: 2
   }
 }
-layer {
-  name: "m3@ssh_3x3_ohem"
-  type: "Convolution"
-  bottom: "pool6"
-  top: "m3@ssh_3x3_output_ohem"
-  param {name:'m3@ssh_3x3_param1'}
-  param {name:'m3@ssh_3x3_param2'}
-  convolution_param {
-    num_output: 256
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-# Dim red
-layer {
-  name: "m3@ssh_dimred_ohem"
-  type: "Convolution"
-  bottom: "pool6"
-  top: "m3@ssh_dimred_output_ohem"
-  param {name: 'm3@ssh_dimred_param1' }
-  param {name: 'm3@ssh_dimred_param2'}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-layer {
-  name: "m3@ssh_dimred_relu_ohem"
-  type: "ReLU"
-  bottom: "m3@ssh_dimred_output_ohem"
-  top: "m3@ssh_dimred_output_ohem"
-  propagate_down: false
-}
-# 5x5
-layer {
-  name: "m3@ssh_5x5_ohem"
-  type: "Convolution"
-  bottom: "m3@ssh_dimred_output_ohem"
-  top: "m3@ssh_5x5_output_ohem"
-  param {name: 'm3@ssh_5x5_param1'}
-  param {name: 'm3@ssh_5x5_param2'}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-#7x7
-layer {
-  name: "m3@ssh_7x7-1_ohem"
-  type: "Convolution"
-  bottom: "m3@ssh_dimred_output_ohem"
-  top: "m3@ssh_7x7-1_output_ohem"
-  param {name: 'm3@ssh_7x7-1_param1'}
-  param {name: 'm3@ssh_7x7-1_param2'}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-layer {
-  name: "m3@ssh_7x7-1_relu_ohem"
-  type: "ReLU"
-  bottom: "m3@ssh_7x7-1_output_ohem"
-  top: "m3@ssh_7x7-1_output_ohem"
-  propagate_down: false
-}
 
-layer {
-  name: "m3@ssh_7x7"
-  type: "Convolution"
-  bottom: "m3@ssh_7x7-1_output_ohem"
-  top: "m3@ssh_7x7_output_ohem"
-  param {name: 'm3@ssh_7x7_param1'}
-  param {name: 'm3@ssh_7x7_param2'}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-
-layer{
-  name: "m3@ssh_output_ohem"
-  type: "Concat"
-  bottom: "m3@ssh_3x3_output_ohem"
-  bottom: "m3@ssh_5x5_output_ohem"
-  bottom: "m3@ssh_7x7_output_ohem"
-  top: "m3@ssh_output_ohem"
-  concat_param{
-      axis: 1
-  }
-  propagate_down: false
-  propagate_down: false
-  propagate_down: false
-}
-
-layer {
-  name: "m3@ssh_output_relu_ohem"
-  type: "ReLU"
-  bottom: "m3@ssh_output_ohem"
-  top: "m3@ssh_output_ohem"
-  propagate_down: false
-}
-layer {
-  name: "m3@ssh_cls_score_ohem"
-  type: "Convolution"
-  bottom: "m3@ssh_output_ohem"
-  top: "m3@ssh_cls_score_output_ohem"
-  param {name: 'm3@ssh_cls_score_param1'}
-  param {name: 'm3@ssh_cls_score_param2'}
-  convolution_param {
-    num_output: 4   # 2(bg/fg) * 21(anchors)
-    kernel_size: 1 pad: 0 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-
-layer {
-   bottom: "m3@ssh_cls_score_output_ohem"
-   top: "m3@ssh_cls_score_reshape_output_ohem"
-   name: "m3@ssh_cls_reshape_ohem"
-   type: "Reshape"
-   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
-   propagate_down: false
-}
-
-layer {
-  name: "m3@ssh_cls_prob_ohem"
-  type: "Softmax"
-  bottom: "m3@ssh_cls_score_reshape_output_ohem"
-  top: "m3@ssh_cls_prob_output_ohem"
-  propagate_down: false
-}
-layer {
-  name: 'm3@ssh_cls_prob_reshape_ohem'
-  type: 'Reshape'
-  bottom: 'm3@ssh_cls_prob_output_ohem'
-  top: 'm3@ssh_cls_prob_reshape_output_ohem'
-  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
-  propagate_down: false
-}
 #========== M3@SSH =========
 
 layer {
@@ -806,13 +649,28 @@ layer {
    reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
 }
 layer {
+  name: "m3@ssh_cls_prob"
+  type: "Softmax"
+  bottom: "m3@ssh_cls_score_reshape_output"
+  top: "m3@ssh_cls_prob_output"
+  propagate_down: false
+}
+layer {
+  name: 'm3@ssh_cls_prob_reshape'
+  type: 'Reshape'
+  bottom: 'm3@ssh_cls_prob_output'
+  top: 'm3@ssh_cls_prob_reshape_output'
+  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
+  propagate_down: false
+}
+layer {
   name: 'm3@ssh_target_layer'
   type: 'Python'
   bottom: 'm3@ssh_cls_score_output'
   bottom: 'gt_boxes'
   bottom: 'im_info'
   bottom: 'data'
-  bottom: 'm3@ssh_cls_prob_reshape_output_ohem'
+  bottom: 'm3@ssh_cls_prob_reshape_output'
   top: 'm3@ssh_anchor_labels'
   top: 'm3@ssh_reg_tragets'
   top: 'm3@ssh_reg_inside_weights'
@@ -847,164 +705,6 @@ layer {
   top: "m3@ssh_reg_loss"
   loss_weight: 1
   smooth_l1_loss_param { sigma: 3.0 }
-}
-
-#========= M2@SSH OHEM ==========
-layer {
-  name: "m2@ssh_3x3_ohem"
-  type: "Convolution"
-  bottom: "conv5_3"
-  top: "m2@ssh_3x3_output_ohem"
-  propagate_down: false
-  param {name: "m2@ssh_3x3_param1"}
-  param {name: "m2@ssh_3x3_param2"}
-  convolution_param {
-    num_output: 256
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-# Dim red
-layer {
-  name: "m2@ssh_dimred_ohem"
-  type: "Convolution"
-  bottom: "conv5_3"
-  top: "m2@ssh_dimred_output_ohem"
-  propagate_down: false
-  param {name: "m2@ssh_dimred_param1"}
-  param {name: "m2@ssh_dimred_param2"}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-layer {
-  name: "m2@ssh_dimred_relu_ohem"
-  type: "ReLU"
-  bottom: "m2@ssh_dimred_output_ohem"
-  top: "m2@ssh_dimred_output_ohem"
-  propagate_down: false
-}
-# 5x5
-layer {
-  name: "m2@ssh_5x5_ohem"
-  type: "Convolution"
-  bottom: "m2@ssh_dimred_output_ohem"
-  top: "m2@ssh_5x5_output_ohem"
-  propagate_down: false
-  param {name: "m2@ssh_5x5_param1"}
-  param {name: "m2@ssh_5x5_param2"}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-#7x7
-layer {
-  name: "m2@ssh_7x7-1_ohem"
-  type: "Convolution"
-  bottom: "m2@ssh_dimred_output_ohem"
-  top: "m2@ssh_7x7-1_output_ohem"
-  propagate_down: false
-  param {name: "m2@ssh_7x7-1_param1"}
-  param {name: "m2@ssh_7x7-1_param2"}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-layer {
-  name: "m2@ssh_7x7-1_relu_ohem"
-  type: "ReLU"
-  bottom: "m2@ssh_7x7-1_output_ohem"
-  top: "m2@ssh_7x7-1_output_ohem"
-  propagate_down: false
-}
-
-layer {
-  name: "m2@ssh_7x7"
-  type: "Convolution"
-  bottom: "m2@ssh_7x7-1_output_ohem"
-  top: "m2@ssh_7x7_output_ohem"
-  propagate_down: false
-  param {name: "m2@ssh_7x7_param1"}
-  param {name: "m2@ssh_7x7_param2"}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-}
-
-layer{
-  name: "m2@ssh_output_ohem"
-  type: "Concat"
-  bottom: "m2@ssh_3x3_output_ohem"
-  bottom: "m2@ssh_5x5_output_ohem"
-  bottom: "m2@ssh_7x7_output_ohem"
-  top: "m2@ssh_output_ohem"
-  concat_param{
-      axis: 1
-  }
-  propagate_down: false
-  propagate_down: false
-  propagate_down: false
-}
-
-layer {
-  name: "m2@ssh_output_relu_ohem"
-  type: "ReLU"
-  bottom: "m2@ssh_output_ohem"
-  top: "m2@ssh_output_ohem"
-  propagate_down: false
-}
-layer {
-  name: "m2@ssh_cls_score_ohem"
-  type: "Convolution"
-  bottom: "m2@ssh_output_ohem"
-  top: "m2@ssh_cls_score_output_ohem"
-  param {name: "m2@ssh_cls_score_param1"}
-  param {name: "m2@ssh_cls_score_param2"}
-  convolution_param {
-    num_output: 4   # 2(bg/fg) * 21(anchors)
-    kernel_size: 1 pad: 0 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-
-layer {
-   bottom: "m2@ssh_cls_score_output_ohem"
-   top: "m2@ssh_cls_score_reshape_output_ohem"
-   name: "m2@ssh_cls_reshape_ohem"
-   type: "Reshape"
-   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
-   propagate_down: false
-}
-
-layer {
-  name: "m2@ssh_cls_prob_ohem"
-  type: "Softmax"
-  bottom: "m2@ssh_cls_score_reshape_output_ohem"
-  top: "m2@ssh_cls_prob_output_ohem"
-  propagate_down: false
-}
-layer {
-  name: 'm2@ssh_cls_prob_reshape_ohem'
-  type: 'Reshape'
-  bottom: 'm2@ssh_cls_prob_output_ohem'
-  top: 'm2@ssh_cls_prob_reshape_output_ohem'
-  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
-  propagate_down: false
 }
 
 #========== M2@SSH =========
@@ -1150,13 +850,28 @@ layer {
    reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
 }
 layer {
+  name: "m2@ssh_cls_prob"
+  type: "Softmax"
+  bottom: "m2@ssh_cls_score_reshape_output"
+  top: "m2@ssh_cls_prob_output"
+  propagate_down: false
+}
+layer {
+  name: 'm2@ssh_cls_prob_reshape'
+  type: 'Reshape'
+  bottom: 'm2@ssh_cls_prob_output'
+  top: 'm2@ssh_cls_prob_reshape_output'
+  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
+  propagate_down: false
+}
+layer {
   name: 'm2@ssh_target_layer'
   type: 'Python'
   bottom: 'm2@ssh_cls_score_output'
   bottom: 'gt_boxes'
   bottom: 'im_info'
   bottom: 'data'
-  bottom: 'm2@ssh_cls_prob_reshape_output_ohem'
+  bottom: 'm2@ssh_cls_prob_reshape_output'
   top: 'm2@ssh_anchor_labels'
   top: 'm2@ssh_reg_tragets'
   top: 'm2@ssh_reg_inside_weights'
@@ -1191,164 +906,6 @@ layer {
   top: "m2@ssh_reg_loss"
   loss_weight: 1
   smooth_l1_loss_param { sigma: 3.0 }
-}
-
-#========== M1@SSH OHEM =========
-
-layer {
-  name: "m1@ssh_3x3_ohem"
-  type: "Convolution"
-  bottom: "conv4_fuse_final"
-  top: "m1@ssh_3x3_output_ohem"
-  param {name: "m1@ssh_3x3_param1"}
-  param {name: "m1@ssh_3x3_param2"}
-  convolution_param {
-    num_output: 128
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-# Dim red
-layer {
-  name: "m1@ssh_dimred_ohem"
-  type: "Convolution"
-  bottom: "conv4_fuse_final"
-  top: "m1@ssh_dimred_output_ohem"
-  param {name: "m1@ssh_dimred_param1"}
-  param {name: "m1@ssh_dimred_param2"}
-  convolution_param {
-    num_output: 64
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-layer {
-  name: "m1@ssh_dimred_relu_ohem"
-  type: "ReLU"
-  bottom: "m1@ssh_dimred_output_ohem"
-  top: "m1@ssh_dimred_output_ohem"
-  propagate_down: false
-}
-# 5x5
-layer {
-  name: "m1@ssh_5x5_ohem"
-  type: "Convolution"
-  bottom: "m1@ssh_dimred_output_ohem"
-  top: "m1@ssh_5x5_output_ohem"
-  param {name: "m1@ssh_5x5_param1"}
-  param {name: "m1@ssh_5x5_param2"}
-  convolution_param {
-    num_output: 64
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-#7x7
-layer {
-  name: "m1@ssh_7x7-1_ohem"
-  type: "Convolution"
-  bottom: "m1@ssh_dimred_output_ohem"
-  top: "m1@ssh_7x7-1_output_ohem"
-  param {name: "m1@ssh_7x7-1_param1"}
-  param {name: "m1@ssh_7x7-1_param2"}
-  convolution_param {
-    num_output: 64
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-layer {
-  name: "m1@ssh_7x7-1_relu_ohem"
-  type: "ReLU"
-  bottom: "m1@ssh_7x7-1_output_ohem"
-  top: "m1@ssh_7x7-1_output_ohem"
-  propagate_down: false
-}
-
-layer {
-  name: "m1@ssh_7x7"
-  type: "Convolution"
-  bottom: "m1@ssh_7x7-1_output_ohem"
-  top: "m1@ssh_7x7_output_ohem"
-  param {name: "m1@ssh_7x7_param1"}
-  param {name: "m1@ssh_7x7_param2"}
-  convolution_param {
-    num_output: 64
-    kernel_size: 3 pad: 1 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-
-layer{
-  name: "m1@ssh_output_ohem"
-  type: "Concat"
-  bottom: "m1@ssh_3x3_output_ohem"
-  bottom: "m1@ssh_5x5_output_ohem"
-  bottom: "m1@ssh_7x7_output_ohem"
-  top: "m1@ssh_output_ohem"
-  concat_param{
-      axis: 1
-  }
-  propagate_down: false
-  propagate_down: false
-  propagate_down: false
-}
-layer {
-  name: "m1@ssh_output_relu_ohem"
-  type: "ReLU"
-  bottom: "m1@ssh_output_ohem"
-  top: "m1@ssh_output_ohem"
-  propagate_down: false
-}
-layer {
-  name: "m1@ssh_cls_score_ohem"
-  type: "Convolution"
-  bottom: "m1@ssh_output_ohem"
-  top: "m1@ssh_cls_score_output_ohem"
-  param {name: "m1@ssh_cls_score_param1"}
-  param {name: "m1@ssh_cls_score_param2"}
-  convolution_param {
-    num_output: 4   # 2(bg/fg) * 21(anchors)
-    kernel_size: 1 pad: 0 stride: 1
-    weight_filler { type: "gaussian" std: 0.01 }
-    bias_filler { type: "constant" value: 0 }
-  }
-  propagate_down: false
-}
-
-layer {
-   bottom: "m1@ssh_cls_score_output_ohem"
-   top: "m1@ssh_cls_score_reshape_output_ohem"
-   name: "m1@ssh_cls_reshape_ohem"
-   type: "Reshape"
-   reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
-   propagate_down: false
-}
-
-layer {
-  name: "m1@ssh_cls_prob_ohem"
-  type: "Softmax"
-  bottom: "m1@ssh_cls_score_reshape_output_ohem"
-  top: "m1@ssh_cls_prob_output_ohem"
-  propagate_down: false
-}
-layer {
-  name: 'm1@ssh_cls_prob_reshape_ohem'
-  type: 'Reshape'
-  bottom: 'm1@ssh_cls_prob_output_ohem'
-  top: 'm1@ssh_cls_prob_reshape_output_ohem'
-  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
-  propagate_down: false
 }
 
 #========== M1@SSH =========
@@ -1492,6 +1049,24 @@ layer {
    type: "Reshape"
    reshape_param { shape { dim: 0 dim: 2 dim: -1 dim: 0 } }
 }
+
+layer {
+  name: "m1@ssh_cls_prob"
+  type: "Softmax"
+  bottom: "m1@ssh_cls_score_reshape_output"
+  top: "m1@ssh_cls_prob_output"
+  propagate_down: false
+}
+layer {
+  name: 'm1@ssh_cls_prob_reshape'
+  type: 'Reshape'
+  bottom: 'm1@ssh_cls_prob_output'
+  top: 'm1@ssh_cls_prob_reshape_output'
+  reshape_param { shape { dim: 0 dim:4  dim: -1 dim: 0 } }
+  propagate_down: false
+}
+
+
 layer {
   name: 'm1@ssh_target_layer'
   type: 'Python'
@@ -1499,7 +1074,7 @@ layer {
   bottom: 'gt_boxes'
   bottom: 'im_info'
   bottom: 'data'
-  bottom: 'm1@ssh_cls_prob_reshape_output_ohem'
+  bottom: 'm1@ssh_cls_prob_reshape_output'
   top: 'm1@ssh_anchor_labels'
   top: 'm1@ssh_reg_tragets'
   top: 'm1@ssh_reg_inside_weights'
@@ -1535,4 +1110,3 @@ layer {
   loss_weight: 1
   smooth_l1_loss_param { sigma: 3.0 }
 }
-
