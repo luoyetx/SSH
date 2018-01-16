@@ -3535,9 +3535,6 @@ layer {
 # res5c: 7x7
 
 ###### FPN #############
-# res3d -> res3d_feat
-# res4f -> res4f_feat
-# res5c -> res5c_feat
 
 ### res5c_feat
 
@@ -3554,7 +3551,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 0
     kernel_size: 1
     weight_filler { type: "gaussian" std: 0.01 }
@@ -3573,8 +3570,8 @@ layer {
   convolution_param {
     kernel_size: 4
     stride: 2
-    num_output: 256
-    group: 256
+    num_output: 128
+    group: 128
     pad: 1
     weight_filler: { type: "bilinear" }
     bias_term: false
@@ -3595,7 +3592,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 0
     kernel_size: 1
     weight_filler { type: "gaussian" std: 0.01 }
@@ -3641,7 +3638,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 1
     kernel_size: 3
     weight_filler { type: "gaussian" std: 0.01 }
@@ -3660,8 +3657,8 @@ layer {
   convolution_param {
     kernel_size: 4
     stride: 2
-    num_output: 256
-    group: 256
+    num_output: 128
+    group: 128
     pad: 1
     weight_filler: { type: "bilinear" }
     bias_term: false
@@ -3682,7 +3679,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 0
     kernel_size: 1
     weight_filler { type: "gaussian" std: 0.01 }
@@ -3728,7 +3725,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 1
     kernel_size: 3
     weight_filler { type: "gaussian" std: 0.01 }
@@ -3747,8 +3744,8 @@ layer {
   convolution_param {
     kernel_size: 4
     stride: 2
-    num_output: 256
-    group: 256
+    num_output: 128
+    group: 128
     pad: 1
     weight_filler: { type: "bilinear" }
     bias_term: false
@@ -3769,7 +3766,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 0
     kernel_size: 1
     weight_filler { type: "gaussian" std: 0.01 }
@@ -3815,7 +3812,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 1
     kernel_size: 3
     weight_filler { type: "gaussian" std: 0.01 }

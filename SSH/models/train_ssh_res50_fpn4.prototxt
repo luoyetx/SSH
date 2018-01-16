@@ -3534,9 +3534,6 @@ layer {
 # res5c: 7x7
 
 ###### FPN #############
-# res3d -> res3d_feat
-# res4f -> res4f_feat
-# res5c -> res5c_feat
 
 ### res5c_feat
 
