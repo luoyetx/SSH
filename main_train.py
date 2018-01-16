@@ -30,7 +30,7 @@ def parser():
     parser.add_argument('--cfg', dest='cfg', help='Config file to overwrite the default configs',
                         default='SSH/configs/wider.yml', type=str)
     parser.add_argument('--iters', dest='iters', help='Number of iterations for training the network',
-                        default=21000, type=int)
+                        default=50000, type=int)
 
     return parser.parse_args()
 

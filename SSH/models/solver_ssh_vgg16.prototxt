@@ -3,7 +3,7 @@
 # Solver Prototxt
 # ***************************************************************** #
 
-train_net: "SSH/models/train_ssh.prototxt"
+train_net: "SSH/models/train_ssh_vgg16.prototxt"
 base_lr: 0.004
 lr_policy: "step"
 gamma: 0.1
@@ -13,7 +13,8 @@ average_loss: 100
 momentum: 0.9
 weight_decay: 0.0005
 snapshot: 0
-snapshot_prefix: "SSH"
-iter_size: 2
+snapshot_prefix: "SSH_vgg16"
+iter_size: 2 # 4 GPU
+#iter_size: 4 # 2 GPU
+#iter_size: 8 # 1 GPU
 layer_wise_reduce: false
-    
