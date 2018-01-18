@@ -3,7 +3,7 @@
 # Solver Prototxt
 # ***************************************************************** #
 
-train_net: "SSH/models/train_ssh_res50_fpn.prototxt"
+train_net: "SSH/models/train_ssh_vgg16_fpn.prototxt"
 base_lr: 0.004
 lr_policy: "step"
 gamma: 0.1
@@ -13,7 +13,7 @@ average_loss: 100
 momentum: 0.9
 weight_decay: 0.0005
 snapshot: 0
-snapshot_prefix: "SSH_res50_fpn"
+snapshot_prefix: "SSH_vgg16_fpn"
 #iter_size: 2 # 4 GPU
 iter_size: 4 # 2 GPU
 #iter_size: 8 # 1 GPU

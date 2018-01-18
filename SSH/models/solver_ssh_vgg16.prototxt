@@ -14,7 +14,7 @@ momentum: 0.9
 weight_decay: 0.0005
 snapshot: 0
 snapshot_prefix: "SSH_vgg16"
-iter_size: 2 # 4 GPU
-#iter_size: 4 # 2 GPU
+#iter_size: 2 # 4 GPU
+iter_size: 4 # 2 GPU
 #iter_size: 8 # 1 GPU
 layer_wise_reduce: false
